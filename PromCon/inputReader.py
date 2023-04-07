@@ -128,14 +128,14 @@ class JsonInputReader(BaseInputReader):
             self._parse_document(document, dataset)
 
     def _parse_document(self, doc, dataset) -> Document:
-        sentence = doc['context'].split(" ")# list
-        # query_prompt = doc['query']# list
-        boundary = doc["boundary"]# list
-        span = doc['span_position']# list
+        sentence = doc['context'].split(" ")
+        query_prompt = doc['query']
+        boundary = doc["boundary"]
+        span = doc['span_position']
         enty_type = doc['type']
 
         # parse tokens
-        doc_tokens, doc_encoding, query_len = self._parse_tokens(sentence, enty_type, dataset)### enty_type VS  query_prompt
+        doc_tokens, doc_encoding, query_len = self._parse_tokens(sentence, query_prompt, dataset) 
 
         ## parse boundary map
         boundary = [self.bound_map.get(item) for item in boundary]
@@ -158,7 +158,7 @@ class JsonInputReader(BaseInputReader):
         # parse tokens
         for i, token_phrase in enumerate(jtokens):
             token_encoding = self._tokenizer.encode(token_phrase, add_special_tokens=False)
-            span_start, span_end = (len(doc_encoding), len(doc_encoding) + len(token_encoding))# ## end的位置是在自己的基础上向后+1
+            span_start, span_end = (len(doc_encoding), len(doc_encoding) + len(token_encoding))
             token = dataset.create_token(i, span_start, span_end, token_phrase)
             doc_tokens.append(token)
             doc_encoding += token_encoding
@@ -179,7 +179,7 @@ class JsonInputReader(BaseInputReader):
             # create entity mention
             tokens = doc_tokens[start:end]
             phrase = " ".join([t.phrase for t in tokens])
-            entity = dataset.create_entity(entity_type, tokens, phrase)# dosen't create entity object when a sentence no entity
+            entity = dataset.create_entity(entity_type, tokens, phrase)
             entities.append(entity)
 
         return entities
