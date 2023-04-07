@@ -36,9 +36,6 @@ class PromConTrainer(BaseTrainer):
         super().__init__(args)
 
         # byte-pair encoding
-        # dmis-lab/biobert-large-cased-v1.1
-        # dmis-lab/biobert-base-cased-v1.2
-        # dmis-lab/biobert-base-cased-v1.1
         self._tokenizer = BertTokenizer.from_pretrained(args.tokenizer_path,do_lower_case=args.lowercase,cache_dir=args.cache_path)
 
     def train(self, train_path: str, valid_path: str, types_path: str, input_reader_cls: Type[BaseInputReader]):
@@ -67,8 +64,8 @@ class PromConTrainer(BaseTrainer):
         # load model
         model = self._load_model()
 
-        # EnRElTSG is currently optimized on a single GPU and not thoroughly tested in a multi GPU setup
-        # If you still want to train EnRElTSG on multiple GPUs, uncomment the following lines
+        # KGPC is currently optimized on a single GPU and not thoroughly tested in a multi GPU setup
+        # If you still want to train KGPC on multiple GPUs, uncomment the following lines
         # # parallelize model
         # if self._device.type != 'cpu':
         #     model = torch.nn.DataParallel(model)
@@ -175,7 +172,7 @@ class PromConTrainer(BaseTrainer):
                 batch = utils.to_device(batch, self._device)
 
                 # run model (forward pass)
-                bound_log, _, _ = model(encodings=batch['encodings'], segment_ids=batch['segment_ids'],context_masks=batch['context_masks'],
+                bound_log = model(encodings=batch['encodings'], segment_ids=batch['segment_ids'],context_masks=batch['context_masks'],
                         token_masks=batch['token_masks'],token_masks_bool=batch['token_masks_bool'],match_label=batch['match_label'],
                         query_len=batch['query_len'])
 
