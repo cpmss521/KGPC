@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2022/09/16 上午10:58
 # @Author  : cp
 # @File    : main.py
 
@@ -46,4 +45,4 @@ if __name__ == '__main__':
     elif args.mode == 'eval':
         _eval()
     else:
-        raise Exception("Mode not in ['train', 'eval'], e.g. 'python enRelTsg.py train ...'")
+        raise Exception("Mode not in ['train', 'eval'], e.g. 'python main.py train ...'")
