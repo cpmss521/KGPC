@@ -101,19 +101,19 @@ class PromContrast(BertPreTrainedModel):
         sequence_output = self.bert(input_ids=encodings,token_type_ids=segment_ids,attention_mask =context_masks.float())[0]
         # get query encoding and mask
         batch_size = sequence_output.size()[0]
-        max_query_len = max(query_len)#  query_len is a list with batch size length
-        query_prompt_encoding = torch.zeros((batch_size, max_query_len, sequence_output.size()[-1])).to(sequence_output.device)  # B,Q,H
-        query_mask = torch.zeros((batch_size, max_query_len), dtype=torch.bool).to(sequence_output.device)# B*Q
+        max_query_len = max(query_len) 
+        query_prompt_encoding = torch.zeros((batch_size, max_query_len, sequence_output.size()[-1])).to(sequence_output.device)   
+        query_mask = torch.zeros((batch_size, max_query_len), dtype=torch.bool).to(sequence_output.device) 
 
         for i in range(batch_size):
             query_prompt_encoding[i, :query_len[i]] = sequence_output[i, -(query_len[i]+1):-1, ]
             query_mask[i, :query_len[i]] = torch.ones(query_len[i], dtype=torch.bool)
 
-        query_pooling = torch.sum(query_prompt_encoding*query_mask.unsqueeze(-1), dim=1) / torch.sum(query_mask.unsqueeze(-1), dim=1)#B*H
+        query_pooling = torch.sum(query_prompt_encoding*query_mask.unsqueeze(-1), dim=1) / torch.sum(query_mask.unsqueeze(-1), dim=1) 
         # context representation
-        sequence_output = self.bert_dropout(sequence_output)  # (B S' H)
-        h_token = self.combine(sequence_output, token_masks, self.pool_type)  # (B,S,H)
-        bound_prob = self.boundary_classifier(h_token)# (B,S,3)
+        sequence_output = self.bert_dropout(sequence_output)  
+        h_token = self.combine(sequence_output, token_masks, self.pool_type)   
+        bound_prob = self.boundary_classifier(h_token) 
 
         if boundary is not None:
             active_loss = token_masks_bool.view(-1) == 1
@@ -122,11 +122,11 @@ class PromContrast(BertPreTrainedModel):
 
             loss = boundary_loss + sq_cl
             
-            return loss#################
+            return loss
         else:
             bound_prob = F.log_softmax(bound_prob, dim=2)# B*S
 
-            return bound_prob, h_token,query_pooling
+            return bound_prob
 
 # Model access
 
