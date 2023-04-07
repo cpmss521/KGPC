@@ -14,5 +14,3 @@ python ./main.py train --config configs/train_aug.conf
 python ./main.py eval --config configs/eval.conf
 ```
 
-### Fetch data
-datasets lies in data file
