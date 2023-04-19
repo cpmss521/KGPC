@@ -14,3 +14,7 @@ python ./main.py train --config configs/train_aug.conf
 python ./main.py eval --config configs/eval.conf
 ```
 
+Simulate low-resource scenarios by down-sampling:
+```
+python  sample_k_shot.py
+```
